@@ -10,7 +10,6 @@ if [ -f $dir/settings.sh ]; then
 fi
 
 curl https://pomber.github.io/covid19/timeseries.json > timeseries.json
-
-curl -XDELETE $ES/covid
+curl https://raw.githubusercontent.com/mledoze/countries/master/countries.json > countries.json
 
 python import.py

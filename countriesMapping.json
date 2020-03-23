@@ -1,0 +1,14 @@
+[
+    { "name" : "US", "alias": "United States"},
+    { "name" : "Holy See", "alias": "Vatican City"},
+    { "name" : "Korea, South", "alias": "South Korea"},
+    { "name" : "Cruise Ship", "alias": "Japan"},
+    { "name" : "Taiwan*", "alias": "Taiwan"},
+    { "name" : "Congo (Kinshasa)", "alias": "DR Congo"},
+    { "name" : "Congo (Brazzaville)", "alias": "Republic of the Congo"},
+    { "name" : "Cote d'Ivoire", "alias": "Ivory Coast"},
+    { "name" : "Gambia, The", "alias": "Gambia"},
+    { "name" : "Bahamas, The", "alias": "Bahamas"},
+    { "name" : "Cabo Verde", "alias": "Cape Verde"},
+    { "name" : "East Timor", "alias": "Timor-Leste"}
+]
