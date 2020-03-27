@@ -37,7 +37,7 @@ if (dryRun != 'yes'):
     print(resp)
     resp=es.indices.create(index = 'covid')
     print(resp)
-    resp=es.indices.put_mapping(index='covid', doc_type='_doc',
+    resp=es.indices.put_mapping(index='covid', # doc_type='_doc',
                            body={
                                    #"_doc": {
                                        "properties": {
@@ -50,6 +50,7 @@ if (dryRun != 'yes'):
                                            "active": { "type": "integer" },
                                            "deaths": { "type": "integer" },
                                            "country": { "type": "keyword" },
+                                           "code": { "type": "keyword" },
                                        }
                                   # }
                                 })
@@ -62,8 +63,10 @@ countries = dict()
 
 for countryid in countries_raw:
     name=countryid['name']['common']
+    code=countryid['cca2']
     pos=countryid['latlng']
-    countries[name]='{0:.8f},{1:.8f}'.format(pos[0],pos[1])
+    formattedPos='{0:.8f},{1:.8f}'.format(pos[0],pos[1])
+    countries[name]={'pos': formattedPos, 'code': code}
     #country = countries_raw[countryid]
     print (name)
     print (countries[name])
@@ -77,6 +80,10 @@ for countriesMapping in countriesMappings:
 with open('timeseries.json', 'r') as f:
     timeseries = json.load(f)
 
+def parse(val): 
+    if val == None: return 0
+    return int(val)
+
 i = 1
 for country in timeseries:
     for subobject in timeseries[country]:
@@ -87,8 +94,9 @@ for country in timeseries:
         if len(thedate) == 9:
             thedate = thedate[:8] + "0" + thedate[8:]
         subobject['date'] = thedate + "T00:00:00.000Z"
-        subobject['location']=countries[country]
-        subobject['active']=int(subobject['confirmed'])-int(subobject['recovered'])-int(subobject['deaths'])
+        subobject['location']=countries[country]['pos']
+        subobject['code']=countries[country]['code']
+        subobject['active']=parse(subobject['confirmed'])-parse(subobject['recovered'])-parse(subobject['deaths'])
         print(subobject)
         if (dryRun != 'yes'):
             resp=es.index(index='covid', ignore=400, doc_type='_doc', id=i, body=subobject)

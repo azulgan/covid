@@ -3,6 +3,7 @@
     { "name" : "Holy See", "alias": "Vatican City"},
     { "name" : "Korea, South", "alias": "South Korea"},
     { "name" : "Cruise Ship", "alias": "Japan"},
+    { "name" : "Diamond Princess", "alias": "Japan"},
     { "name" : "Taiwan*", "alias": "Taiwan"},
     { "name" : "Congo (Kinshasa)", "alias": "DR Congo"},
     { "name" : "Congo (Brazzaville)", "alias": "Republic of the Congo"},
