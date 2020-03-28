@@ -53,6 +53,8 @@ if (dryRun != 'yes'):
 #                                           "recovered": { "type": "float" },
                                            "ratioactive": { "type": "float" },
                                            "ratiodeaths": { "type": "float" },
+                                           "percrecovered": { "type": "float" },
+                                           "percdeaths": { "type": "float" },
                                            "country": { "type": "keyword" },
                                            "code": { "type": "keyword" },
                                        }
@@ -109,9 +111,15 @@ for country in timeseries:
         if len(thedate) == 9:
             thedate = thedate[:8] + "0" + thedate[8:]
         subobject['date'] = thedate + "T00:00:00.000Z"
+        confirmed=parse(subobject['confirmed'])
         subobject['location']=countries[country]['pos']
         subobject['code']=countries[country]['code']
-        subobject['active']=parse(subobject['confirmed'])-parse(subobject['recovered'])-parse(subobject['deaths'])
+        deaths=parse(subobject['deaths'])
+        recovered=parse(subobject['recovered'])
+        active=confirmed-recovered-deaths
+        subobject['active']=active
+        subobject['percrecovered']=0 if confirmed == 0 else (recovered * 100.0 / confirmed)
+        subobject['percdeaths']=0 if confirmed == 0 else (deaths * 100.0 / confirmed)
         pop=countries[country].get('pop')
         if (pop != None):
             subobject['pop']=pop
