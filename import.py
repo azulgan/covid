@@ -49,6 +49,10 @@ if (dryRun != 'yes'):
                                            "recovered": { "type": "integer" },
                                            "active": { "type": "integer" },
                                            "deaths": { "type": "integer" },
+                                           "ratioconfirmed": { "type": "float" },
+#                                           "recovered": { "type": "float" },
+                                           "ratioactive": { "type": "float" },
+                                           "ratiodeaths": { "type": "float" },
                                            "country": { "type": "keyword" },
                                            "code": { "type": "keyword" },
                                        }
@@ -77,6 +81,17 @@ with open('countriesMapping.json', 'r') as cm:
 for countriesMapping in countriesMappings:
     countries[countriesMapping['name']]=countries[countriesMapping['alias']]
 
+with open('country-by-population.json', 'r') as cp:
+    countriesPop = json.load(cp)
+
+for countryPop in countriesPop:
+    curName=countryPop['country']
+    country=countries.get(curName)
+    if (country == None):
+        country={}
+    country['pop']=countryPop['population']
+    countries[curName]=country
+
 with open('timeseries.json', 'r') as f:
     timeseries = json.load(f)
 
@@ -97,6 +112,12 @@ for country in timeseries:
         subobject['location']=countries[country]['pos']
         subobject['code']=countries[country]['code']
         subobject['active']=parse(subobject['confirmed'])-parse(subobject['recovered'])-parse(subobject['deaths'])
+        pop=countries[country].get('pop')
+        if (pop != None):
+            subobject['pop']=pop
+            subobject['ratioactive']=parse(subobject['active']) * 1000000.0 /parse(pop)
+            subobject['ratioconfirmed']=parse(subobject['confirmed']) * 1000000.0 /parse(pop)
+            subobject['ratiodeaths']=parse(subobject['deaths']) * 1000000.0 /parse(pop)
         print(subobject)
         if (dryRun != 'yes'):
             resp=es.index(index='covid', ignore=400, doc_type='_doc', id=i, body=subobject)

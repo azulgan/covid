@@ -11,5 +11,7 @@
     { "name" : "Gambia, The", "alias": "Gambia"},
     { "name" : "Bahamas, The", "alias": "Bahamas"},
     { "name" : "Cabo Verde", "alias": "Cape Verde"},
-    { "name" : "East Timor", "alias": "Timor-Leste"}
+    { "name" : "East Timor", "alias": "Timor-Leste"} ,
+    { "name" : "Burma", "alias": "Myanmar"} ,
+    { "name" : "West Bank and Gaza", "alias": "Palestine"}
 ]
