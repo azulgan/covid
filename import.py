@@ -3,10 +3,10 @@
 # the source of data is https://pomber.github.io/covid19/timeseries.json thanks to its autor(s)
 
 import requests, json, os
-from elasticsearch import Elasticsearch #, helpers
+from elasticsearch import Elasticsearch, helpers
 import ssl
 from elasticsearch import RequestsHttpConnection
-
+import uuid
 
 esPort = os.getenv('ES_PORT')
 esHost = os.getenv('ES_HOST')
@@ -101,16 +101,20 @@ def parse(val):
     if val == None: return 0
     return int(val)
 
+def normalizeDate(thedate):
+    if thedate[6] == '-':
+        thedate = thedate[:5] + "0" + thedate[5:]
+    if len(thedate) == 9:
+        thedate = thedate[:8] + "0" + thedate[8:]
+    return thedate
+
+actions = []
+
 i = 1
 for country in timeseries:
     for subobject in timeseries[country]:
         subobject['country'] = country
-        thedate = subobject['date']
-        if thedate[6] == '-':
-            thedate = thedate[:5] + "0" + thedate[5:]
-        if len(thedate) == 9:
-            thedate = thedate[:8] + "0" + thedate[8:]
-        subobject['date'] = thedate + "T00:00:00.000Z"
+        subobject['date'] = normalizeDate(subobject['date']) + "T00:00:00.000Z"
         confirmed=parse(subobject['confirmed'])
         subobject['location']=countries[country]['pos']
         subobject['code']=countries[country]['code']
@@ -128,8 +132,10 @@ for country in timeseries:
             subobject['ratiodeaths']=parse(subobject['deaths']) * 1000000.0 /parse(pop)
         print(subobject)
         if (dryRun != 'yes'):
-            resp=es.index(index='covid', ignore=400, doc_type='_doc', id=i, body=subobject)
-            print(resp)
+            actions.append({"_id" : uuid.uuid4(), # random UUID for _id
+                             "_index": "covid",
+                            "_type" : "_doc", # document _type
+                         "_source": subobject })
         i = i + 1
 
-
+helpers.bulk(es, actions)

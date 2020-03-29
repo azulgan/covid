@@ -13,5 +13,6 @@
     { "name" : "Cabo Verde", "alias": "Cape Verde"},
     { "name" : "East Timor", "alias": "Timor-Leste"} ,
     { "name" : "Burma", "alias": "Myanmar"} ,
+    { "name" : "MS Zaandam", "alias": "Panama"} ,
     { "name" : "West Bank and Gaza", "alias": "Palestine"}
 ]
